@@ -316,7 +316,6 @@ func (d *Dialer) SelectFolder(folder string) (uidValidity uint32, err error) {
 	if err != nil {
 		return
 	}
-	fmt.Printf("FUFFOLO: %q\n", resp)
 	uidValidity, err = parser.ParseExamineResponse(resp)
 	d.Folder = folder
 	return
