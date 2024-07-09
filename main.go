@@ -355,9 +355,14 @@ func (d *Dialer) GetUIDs(search string) (uids []uint32, err error) {
 	return uids, nil
 }
 
-func (d *Dialer) GetEmailByUID(uid uint32) (string, error) {
+func (d *Dialer) GetEmailByUID(uid uint32) (email string, retErr error) {
 	cmd := fmt.Sprintf("UID FETCH %d BODY[]", uid)
 	r, err := d.Exec(cmd, true, nil)
+	defer func() {
+		if recovered := recover(); recovered != nil {
+			retErr = fmt.Errorf("error while parsing %#v. %s", r, recovered)
+		}
+	}()
 	if err != nil {
 		return "", err
 	}
