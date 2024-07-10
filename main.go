@@ -374,3 +374,24 @@ func (d *Dialer) GetEmailByUID(uid uint32) (email string, retErr error) {
 	}
 	return strings.TrimPrefix(fetchInfo["BODY[]"], nl), nil
 }
+
+func (d *Dialer) MoveToFolder(uid uint32, folder string) error {
+	cmd := fmt.Sprintf("UID COPY %d \"%s\"", uid, AddSlashes.Replace(folder))
+	_, err := d.Exec(cmd, false, nil)
+	if err != nil {
+		return err
+	}
+
+	cmd = fmt.Sprintf("UID STORE %d +FLAGS (\\Deleted \\Seen)", uid)
+	_, err = d.Exec(cmd, false, nil)
+	if err != nil {
+		return err
+	}
+
+	cmd = fmt.Sprintf("UID EXPUNGE %d", uid)
+	_, err = d.Exec(cmd, true, nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
