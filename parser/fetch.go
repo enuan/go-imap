@@ -69,7 +69,13 @@ func ParseFetchResponse(resp string) (map[string]string, error) {
 					"remaining=%q", p.Remaining())
 			}
 		} else {
-			content = p.ConsumeUntil(' ', ')')
+			consumed = p.Consume("(")
+			if consumed {
+				content = fmt.Sprintf("(%s)", p.ConsumeUntil(')'))
+				p.ConsumeUntil(' ', ')')
+			} else {
+				content = p.ConsumeUntil(' ', ')')
+			}
 		}
 		m[k] = content
 	}

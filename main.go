@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -360,7 +361,8 @@ func (d *Dialer) GetEmailByUID(uid uint32) (email string, retErr error) {
 	r, err := d.Exec(cmd, true, nil)
 	defer func() {
 		if recovered := recover(); recovered != nil {
-			retErr = fmt.Errorf("error while parsing %#v. %s", r, recovered)
+			fmt.Fprintf(os.Stderr, "ERROR parsing: %#v\n", r)
+			retErr = fmt.Errorf("error while parsing: %s", recovered)
 		}
 	}()
 	if err != nil {
