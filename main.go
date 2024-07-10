@@ -313,7 +313,7 @@ func (d *Dialer) Login(username string, password string) (err error) {
 
 // SelectFolder selects a folder
 func (d *Dialer) SelectFolder(folder string) (uidValidity uint32, err error) {
-	resp, err := d.Exec(`EXAMINE "`+AddSlashes.Replace(folder)+`"`, true, nil)
+	resp, err := d.Exec(`SELECT "`+AddSlashes.Replace(folder)+`"`, true, nil)
 	if err != nil {
 		return
 	}
@@ -357,7 +357,7 @@ func (d *Dialer) GetUIDs(search string) (uids []uint32, err error) {
 }
 
 func (d *Dialer) GetEmailByUID(uid uint32) (email string, retErr error) {
-	cmd := fmt.Sprintf("UID FETCH %d BODY[]", uid)
+	cmd := fmt.Sprintf("UID FETCH %d BODY.PEEK[]", uid)
 	r, err := d.Exec(cmd, true, nil)
 	defer func() {
 		if recovered := recover(); recovered != nil {
